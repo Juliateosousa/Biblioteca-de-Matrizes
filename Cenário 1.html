@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Biblioteca de Matrizes</title>
+  
+  <style>
+    /* ============================================================ */
+    /* THEME / PAGE LAYOUT                                           */
+    /* ============================================================ */
+    
+    :root{
+      --bg: #fafafa;
+      --card: #ffffff;
+      --border: #d8d8d8;
+      --border-strong: #111;
+      --text: #111;
+      --muted: #666;
+      --shadow: 0 8px 24px rgba(0,0,0,0.06);
+      --radius: 14px;
+      --gap: 12px;
+      --control-h: 44px;
+    }
+    
+    body{
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    
+    .page{
+      width: 95%;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+    
+    .section{
+      margin-bottom: 26px; /* (was 22px, but your later rule overrides to 26px) */
+    }
+    
+    .section h2{
+      margin: 0 0 10px 2px;
+      font-size: 16px;     /* (later override) */
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: var(--text);
+    }
+    
+    .twoCol{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    
+    @media (max-width: 900px){
+      .twoCol{ grid-template-columns: 1fr; }
+    }
+    
+    .card{
+      background: #fff;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    
+    /* ============================================================ */
+    /* GLOBAL CONTROLS (inputs/buttons)                              */
+    /* ============================================================ */
+    
+    input, button{
+      font-family: inherit;
+    }
+    
+    input[type="text"], input[type="number"]{
+      height: var(--control-h);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      outline: none;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s, transform .05s;
+    }
+    
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder{
+      color: #9a9a9a;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus{
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 4px rgba(79,70,229,.15);
+    }
+    
+    button{
+      height: var(--control-h);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 0 14px;
+      cursor: pointer;
+      transition: transform .05s, box-shadow .15s, border-color .15s, background .15s;
+    }
+    
+    button:hover{
+      border-color: #bdbdbd;
+      box-shadow: 0 4px 14px rgba(0,0,0,.06);
+    }
+    
+    button:active{ transform: translateY(1px); }
+    
+    /* Primary buttons */
+    #BVA, #BVB, #BMA, #BMB{
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+    
+    #BVA:hover, #BVB:hover, #BMA:hover, #BMB:hover{
+      background: #1b1b1b;
+    }
+    
+    /* ============================================================ */
+    /* VECTOR                                                       */
+    /* ============================================================ */
+    
+    .vectorsRow{
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+    }
+    
+    .vectorArea{
+      padding: 12px;
+      border-left: 3px solid var(--border-strong);
+      border-right: 0;
+      border-radius: 10px;
+      gap: 25px;
+    }
+    
+    .vectorArea:last-child{
+      border-right: 3px solid var(--border-strong);
+    }
+    
+    .vectorRow{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Keep widths/font sizes from your original rules */
+    #myInputIA, #myInputIB{
+      width: 40px;
+      font-size: 25px;
+      text-align: center;
+      margin-top: 0 !important;
+    }
+    
+    #myInputVA, #myInputVB{
+      width: 350px;
+      font-size: 25px;
+      text-align: center;
+      margin-top: 0 !important;
+    }
+    
+    #BVA, #BVB{
+      font-size: 16px;
+      margin-top: 0 !important;
+    }
+    
+    .vectorButtons{ margin: 15px 0; }
+    
+    .vectorButtons button{
+      margin-right: 10px;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    .vectorActions{
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .vectorGetBlock{
+      border-right: 0;
+      padding-right: 0;
+      margin-right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .vectorGetBlock.hasBorder{
+      border-right: 4px solid black;
+      padding-right: 10px;
+      margin-right: 10px;
+    }
+    
+    .vectorGetRow input{
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      text-align: center;
+      margin: 6px;
+    }
+    
+    .vectorGetRow button{
+      font-size: 16px;
+      padding: 5px 10px;
+      margin: 6px;
+    }
+    
+    .vectorGetResult{ font-size: 25px; }
+    
+    .vectorSetRow{
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .vectorSetRow input{
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      text-align: center;
+    }
+    
+    .vectorSetRow button{
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    input.bigInputV{
+      width: 90px !important;
+      height: 45px;
+      font-size: 18px;
+      text-align: center;
+      margin: 6px;
+    }
+    
+    /* ============================================================ */
+    /* MATRIX                                                       */
+    /* ============================================================ */
+    
+    .matricesRow{
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+      margin-top: 10px;
+    }
+    
+    .matrixArea{
+      padding: 12px;
+      border-left: 3px solid var(--border-strong);
+      border-right: 0;
+      border-radius: 10px;
+    }
+    
+    .matrixArea:last-child{
+      border-right: 3px solid var(--border-strong);
+    }
+    
+    .matrixTop {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .matrixTop input{
+      width: 50px;
+      font-size: 25px;
+      text-align: center;
+    }
+    
+    .matrixTop button{
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    .reset-btn {
+      margin-left: auto;
+    }
+    
+    .matrixGrid{
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    
+    .row{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .cell{
+      width: 52px;         /* (later override) */
+      height: 42px;        /* (later override) */
+      font-size: 18px;
+      text-align: center;
+      margin: 2px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    
+    .send-btn{
+      width: 60px;
+      height: 40px;
+      font-size: 16px;
+      text-align: center;
+      margin-left: 10px;
+    }
+    
+    .smallInput{
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      text-align: center;
+      margin: 6px;
+    }
+    
+    .bigInput{
+      width: 90px;
+      height: 45px;
+      font-size: 18px;
+      text-align: center;
+      margin: 6px;
+    }
+    
+    .sendgetbutton{
+      font-size: 16px;
+      padding: 5px 10px;
+      margin: 6px;
+    }
+    
+    .matrixGetResult{
+      width: 45px;
+      height: 45px;
+      font-size: 25px;
+      margin: 6px;
+    }
+    
+    .matrixButtons{ margin-top: 12px; }
+    
+    .matrixButtons button{
+      margin-right: 10px;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    /* ============================================================ */
+    /* ALGEBRA                                                      */
+    /* ============================================================ */
+    
+    #algebraButtons{ margin-top: 20px; }
+    
+    #algebraButtons button{
+      margin-right: 10px;
+      font-size: 16px;
+      padding: 5px 10px;
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+    
+    .algebraActive{
+      border-top: 3px solid black;
+      margin-top: 14px;
+      padding-top: 10px;
+    }
+    
+    /* TRANSPOSE */
+    .transposeRow{
+      display: flex;
+      gap: 60px;
+      align-items: flex-start;
+      margin-top: 10px;
+    }
+    
+    .transposeCol{
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 320px;
+    }
+    
+    .transposeItem{
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    #TransposeButtonsA,
+    #TransposeButtonsVectorA,
+    #TransposeButtonsB,
+    #TransposeButtonsVectorB{
+      min-width: 170px;
+    }
+    
+    #TransposeResultA,
+    #TransposeResultVectorA,
+    #TransposeResultB,
+    #TransposeResultVectorB{
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .row{
+      display: flex;
+      gap: 6px;
+    }
+    
+    .cell{
+      width: 48px;
+      text-align: center;
+    }
+    
+    /* SUM */
+    .SumButton button{
+      margin-right: 10px;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    #SumVectorR{
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    
+    #SumGrid{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    
+    .sumRowsWrapper{
+      display: flex;
+      gap: 230px;
+      align-items: flex-start;
+    }
+    
+    .sumRow{
+      display: grid;
+      grid-template-columns: max-content max-content;
+      column-gap: 12px;
+      align-items: start;
+      margin-top: 12px;
+    }
+    
+    #SumbuttonVector,
+    #SumbuttonMatrix{
+      display: flex;
+      min-width: max-content;
+    }
+    
+    #SumVectorR,
+    #SumGrid{
+      min-width: max-content;
+    }
+    
+    /* DOT */
+    .DotRowsWrapper{
+      display: flex;
+      gap: 60px;
+      align-items: flex-start;
+      margin-top: 10px;
+    }
+    
+    .DotRow{
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      min-width: 320px;
+    }
+    
+    #DotGridAB, #DotGridBA{
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    
+    /* Tighten top spacing on sections inside Algebra */
+    .vectorButtons, .matrixButtons, .SumButton, .DotButton{
+      margin-top: 12px;
+    }
+    
+    .primary-btn{
+      background: #111;
+      color: #fff;
+      border-color: #111;
+      font-size: 16px;
+    }
+    
+    .primary-btn:hover{
+      background: #1b1b1b;
+    }
+    
+    .gauss-columns {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .gauss-column {
+      flex: 1;
+    }
+    
+    .gauss-column h3 {
+      margin: 0 0 5px 0;
+    }
+    
+  </style>
+  
+</head>
+
+<body>
+  <div class="page">
+    <!-- VECTORS -->
+    <section class="section">
+      <h2>Vetores</h2>
+
+      <div class="twoCol">
+        <!-- Keep your existing Vector A block -->
+        <div class="card">
+            <div class="vectorArea" id="vectorAreaA">
+                <div class="vectorRow" id="vectorRowA">
+                    <input type="number" id="myInputIA" placeholder="i">
+                    <input type="text" id="myInputVA" placeholder="V[0],V[1],V[2],...">
+                    <button id="BVA">Enviar VetorA</button>
+                </div>
+                <div class="vectorButtons" id="vectorButtonsA"></div>
+                <div class="vectorActions">
+                    <div class="vectorGetBlock" id="vectorGetBlockA">
+                      <div class="vectorGetRow" id="vectorGetRowA"></div>
+                      <div class="vectorGetResult" id="vectorGetResultA"></div>
+                    </div>
+                    <div class="vectorSetRow" id="vectorSetRowA"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keep your existing Vector B block -->
+        <div class="card">
+            <div class="vectorArea" id="vectorAreaB">
+                <div class="vectorRow" id="vectorRowB">
+                    <input type="number" id="myInputIB" placeholder="i">
+                    <input type="text" id="myInputVB" placeholder="V[0],V[1],V[2],...">
+                    <button id="BVB">Enviar VetorB</button>
+                </div>
+                <div class="vectorButtons" id="vectorButtonsB"></div>
+                <div class="vectorActions">
+                    <div class="vectorGetBlock" id="vectorGetBlockB">
+                      <div class="vectorGetRow" id="vectorGetRowB"></div>
+                      <div class="vectorGetResult" id="vectorGetResultB"></div>
+                    </div>
+                    <div class="vectorSetRow" id="vectorSetRowB"></div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MATRICES -->
+    <section class="section">
+      <h2>Matrizes</h2>
+
+      <div class="twoCol">
+        <!-- Keep your existing Matrix A block -->
+        <div class="card">
+            <div class="matrixArea" id="matrixAreaA">
+            <div class="matrixTop">
+                <input type="number" id="myInputLA" placeholder="La">
+                <input type="number" id="myInputCA" placeholder="Ca">
+                <button id="BMA">Enviar MatrizA</button>
+            </div>
+
+            <div class="matrixGrid" id="matrixGridA"></div>
+            <div class="matrixButtons" id="matrixButtonsA"></div>
+            <div class="matrixGet" id="matrixGetA"></div>
+            <div class="matrixGetResult" id="matrixGetResultA"></div>
+            <div class="matrixSet" id="matrixSetA"></div>
+            </div>
+        </div>
+
+        <!-- Keep your existing Matrix B block -->
+        <div class="card">
+            <div class="matrixArea" id="matrixAreaB">
+                <div class="matrixTop">
+                    <input type="number" id="myInputLB" placeholder="Lb">
+                    <input type="number" id="myInputCB" placeholder="Cb">
+                    <button id="BMB">Enviar MatrizB</button>
+                </div>
+
+                <div class="matrixGrid" id="matrixGridB"></div>
+                <div class="matrixButtons" id="matrixButtonsB"></div>
+                <div class="matrixGet" id="matrixGetB"></div>
+                <div class="matrixGetResult" id="matrixGetResultB"></div>
+                <div class="matrixSet" id="matrixSetB"></div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- ALGEBRA -->
+    <section class="section">
+      <h2>Álgebra Linear</h2>
+      <div class="card">
+        <div class="algebraButtons" id="algebraButtons"></div>
+        
+        <div class="TransposeButton" id="TransposeButton">
+          <div class="transposeRow">
+            
+            <!-- LEFT COLUMN (VECTORS) -->
+            <div class="transposeCol">
+              <div class="transposeItem">
+                <div id="TransposeButtonsVectorA"></div>
+                <div id="TransposeResultVectorA"></div>
+              </div>
+              
+              <div class="transposeItem">
+                <div id="TransposeButtonsVectorB"></div>
+                <div id="TransposeResultVectorB"></div>
+              </div>
+            </div>
+            
+            <!-- RIGHT COLUMN (MATRICES) -->
+            <div class="transposeCol">
+              <div class="transposeItem">
+                <div id="TransposeButtonsA"></div>
+                <div id="TransposeResultA"></div>
+              </div>
+              
+              <div class="transposeItem">
+                <div id="TransposeButtonsB"></div>
+                <div id="TransposeResultB"></div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+        <div class="SumButton" id="SumButton">
+          <div class="sumRowsWrapper">
+            <div class="sumRow">
+              <div id="SumbuttonVector"></div>
+              <div id="SumVectorR"></div>
+            </div>
+            <div class="sumRow">
+              <div id="SumbuttonMatrix"></div>
+              <div id="SumGrid"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="TimesButton" id="TimesButton">
+          
+        </div>
+        
+        <div class="DotButton" id="DotButton">
+          <div class="DotRowsWrapper">
+            <div class="DotRow">
+              <div id="DotbuttonAB"></div>
+              <div id="DotGridAB"></div>
+            </div>
+            <div class="DotRow">
+              <div id="DotbuttonBA"></div>
+              <div id="DotGridBA"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="GaussButton" id="GaussButton"></div>
+        <div class="GaussResult" id="GaussResult"></div>
+        
+        <div class="SolveButton" id="SolveButton"></div>
+        
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ====================== GLOBAL STORAGE ======================
+    let savedVector = {A:[], B:[]}
+    let savedMatrix = {A:[], B:[]}
+
+    const algebraButtons = document.getElementById("algebraButtons");
+
+    // ====================== ALGEBRA BUTTONS ======================
+    function updateAlgebraButtons() {
+      const vectorAOk = Array.isArray(savedVector.A) && savedVector.A.length > 0;
+      const vectorBOk = Array.isArray(savedVector.B) && savedVector.B.length > 0;
+      const matrixAOk = Array.isArray(savedMatrix.A) && savedMatrix.A.length > 0 && Array.isArray(savedMatrix.A[0]);
+      const matrixBOk = Array.isArray(savedMatrix.B) && savedMatrix.B.length > 0 && Array.isArray(savedMatrix.B[0]);
+
+      if (!(vectorAOk|| vectorBOk || matrixAOk || matrixBOk)) return;
+
+      algebraButtons.innerHTML = "";
+
+      // TRANSPOSE BUTTON
+      const transposeBtn = document.createElement("button");
+      transposeBtn.textContent = "Transpose";
+      
+      transposeBtn.addEventListener("click", () => {
+        const btnA = document.getElementById("TransposeButtonsA");
+        const btnB = document.getElementById("TransposeButtonsB");
+        const btnVectorA = document.getElementById("TransposeButtonsVectorA");
+        const btnVectorB = document.getElementById("TransposeButtonsVectorB");
+        
+        const resultA = document.getElementById("TransposeResultA");
+        const resultB = document.getElementById("TransposeResultB");
+        const resultVectorA = document.getElementById("TransposeResultVectorA");
+        const resultVectorB = document.getElementById("TransposeResultVectorB");
+        document.getElementById("TransposeButton").classList.add("algebraActive");
+        
+        btnA.innerHTML = "";
+        btnB.innerHTML = "";
+        btnVectorA.innerHTML = "";
+        btnVectorB.innerHTML = "";
+        resultA.innerHTML = "";
+        resultB.innerHTML = "";
+        resultVectorA.innerHTML = "";
+        resultVectorB.innerHTML = "";
+        
+        const buttonA = document.createElement("button");
+        buttonA.textContent = "Transpose Matrix A";
+        
+        const buttonB = document.createElement("button");
+        buttonB.textContent = "Transpose Matrix B";
+        
+        const buttonVectorA = document.createElement("button");
+        buttonVectorA.textContent = "Transpose Vector A";
+        
+        const buttonVectorB = document.createElement("button");
+        buttonVectorB.textContent = "Transpose Vector B";
+        
+        btnA.appendChild(buttonA);
+        btnVectorA.appendChild(buttonVectorA);
+        
+        btnB.appendChild(buttonB);
+        btnVectorB.appendChild(buttonVectorB);
+        
+        buttonA.classList.add("primary-btn");
+        buttonB.classList.add("primary-btn");
+        buttonVectorA.classList.add("primary-btn");
+        buttonVectorB.classList.add("primary-btn");
+        
+        buttonA.addEventListener("click", () => {
+          const A = savedMatrix.A;
+          
+          if (!Array.isArray(A) || A.length === 0 || !Array.isArray(A[0])) {
+            alert("Salve a matriz A primeiro.");
+            return;
+          }
+          
+          const rows = A.length;
+          const cols = A[0].length;
+          
+          const transposed = Array.from({ length: cols }, (_, i) =>
+            Array.from({ length: rows }, (_, j) => A[j][i])
+          );
+          
+          resultA.innerHTML = "";
+          
+          for (let i = 0; i < transposed.length; i++) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row");
+            
+            for (let j = 0; j < transposed[i].length; j++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = transposed[i][j];
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              rowDiv.appendChild(cell);
+            }
+            
+            resultA.appendChild(rowDiv);
+          }
+        });
+        
+        buttonB.addEventListener("click", () => {
+          const B = savedMatrix.B;
+          
+          if (!Array.isArray(B) || B.length === 0 || !Array.isArray(B[0])) {
+            alert("Salve a matriz B primeiro.");
+            return;
+          }
+          
+          const rows = B.length;
+          const cols = B[0].length;
+          
+          const transposed = Array.from({ length: cols }, (_, i) =>
+            Array.from({ length: rows }, (_, j) => B[j][i])
+          );
+          
+          resultB.innerHTML = "";
+          
+          for (let i = 0; i < transposed.length; i++) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row");
+            
+            for (let j = 0; j < transposed[i].length; j++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = transposed[i][j];
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              rowDiv.appendChild(cell);
+            }
+            
+            resultB.appendChild(rowDiv);
+          }
+        });
+        
+        buttonVectorA.addEventListener("click", () => {
+          const A = savedVector.A;
+          
+          if (!Array.isArray(A) || A.length === 0) {
+            alert("Salve o vetor primeiro");
+            return;
+          }
+          
+          resultVectorA.innerHTML = "";
+          
+          for (let i = 0; i < A.length; i++) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row");
+            
+            const cell = document.createElement("input");
+            cell.type = "text";
+            cell.value = A[i];
+            cell.readOnly = true;
+            cell.classList.add("cell");
+            
+            rowDiv.appendChild(cell);
+            resultVectorA.appendChild(rowDiv);
+          }
+        });
+        
+        buttonVectorB.addEventListener("click", () => {
+          const B = savedVector.B;
+          
+          if (!Array.isArray(B) || B.length === 0) {
+            alert("Salve o vetor B primeiro");
+            return;
+          }
+          
+          resultVectorB.innerHTML = "";
+          
+          for (let i = 0; i < B.length; i++) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row");
+            
+            const cell = document.createElement("input");
+            cell.type = "text";
+            cell.value = B[i];
+            cell.readOnly = true;
+            cell.classList.add("cell");
+            
+            rowDiv.appendChild(cell);
+            resultVectorB.appendChild(rowDiv);
+          }
+        });
+      });
+
+      const sumBtn = document.createElement("button");
+      sumBtn.textContent = "Sum";
+      sumBtn.addEventListener("click", () => {
+        const btnVectorSlot = document.getElementById("SumbuttonVector");
+        const btnMatrixSlot = document.getElementById("SumbuttonMatrix");
+        const SumVectorR   = document.getElementById("SumVectorR");
+        const SumGrid      = document.getElementById("SumGrid");
+        document.getElementById("SumButton").classList.add("algebraActive");
+        
+        btnMatrixSlot.innerHTML = "";
+        btnVectorSlot.innerHTML = "";
+        SumVectorR.innerHTML = "";
+        SumGrid.innerHTML = "";
+        const button1 = document.createElement("button");
+        button1.textContent = "Somar Vetores";
+        button1.classList.add("primary-btn");
+        const button2 = document.createElement("button");
+        button2.textContent = "Somar Matrizes";
+        button2.classList.add("primary-btn");
+        btnVectorSlot.append(button1);
+        btnMatrixSlot.append(button2);
+        button1.addEventListener("click", () => {
+          SumVectorR.innerHTML = "";
+          const A = savedVector.A;
+          const B = savedVector.B;
+
+          if (!Array.isArray(A) || !Array.isArray(B) || A.length === 0 || B.length === 0) {
+            alert("Salve os vetores A e B primeiro.");
+            return;
+          }
+
+          if (A.length !== B.length) {
+            alert("As dimensões dos vetores não são iguais");
+            return;
+          }
+
+          const VectorSum = A.map((a, i) => Number(a) + Number(B[i]));
+          for (let i = 0; i < A.length; i++){
+          const label = document.createElement("input");
+          label.type = "text";
+          label.value = VectorSum[i];
+          label.readOnly = true;
+          label.classList.add("cell");
+          SumVectorR.append(label);
+          }
+        });
+
+        button2.addEventListener("click", () => {
+          SumGrid.innerHTML = "";
+          const A = savedMatrix.A;
+          const B = savedMatrix.B;
+
+          if (!Array.isArray(A) || !Array.isArray(B) || A.length === 0 || B.length === 0) {
+            alert("Salve as matrizes A e B primeiro.");
+            return;
+          }
+
+          if (A.length !== B.length || A[0].length !== B[0].length) {
+            alert("As dimensões das matrizes não são iguais");
+            return;
+          }
+
+          const rows = A.length;
+          const cols = A[0].length;
+          const MatrixSum = Array.from({ length: rows }, (_, i) =>
+            Array.from({ length: cols }, (_, j) => Number(A[i][j]) + Number(B[i][j]))
+          );
+
+          for (let i = 0; i < rows; i++) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row");
+            for (let j = 0; j < cols; j++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = MatrixSum[i][j];
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              rowDiv.appendChild(cell);
+            }
+            SumGrid.appendChild(rowDiv);
+          }
+        });
+      });
+
+      const timesBtn = document.createElement("button");
+      timesBtn.textContent = "Times";
+      
+      timesBtn.addEventListener("click", () => {
+        const container = document.getElementById("TimesButton");
+        document.getElementById("TimesButton").classList.add("algebraActive");
+        container.innerHTML = "";
+        
+        // first dropdown
+        const select1 = document.createElement("select");
+        select1.classList.add("primary-btn");
+        
+        // second dropdown
+        const select2 = document.createElement("select");
+        select2.style.marginLeft = "10px";
+        select2.classList.add("primary-btn");
+        
+        function fillDropdown(select, includeScalar) {
+          select.innerHTML = "";
+          
+          // matrices
+          Object.keys(savedMatrix).forEach(name => {
+            const option = document.createElement("option");
+            option.value = "matrix_" + name;
+            option.textContent = "Matrix " + name;
+            select.appendChild(option);
+          });
+          
+          // vectors
+          Object.keys(savedVector).forEach(name => {
+            const option = document.createElement("option");
+            option.value = "vector_" + name;
+            option.textContent = "Vector " + name;
+            select.appendChild(option);
+          });
+          
+          // add scalar ONLY if allowed
+          if (includeScalar) {
+            const scalarOption = document.createElement("option");
+            scalarOption.value = "scalar";
+            scalarOption.textContent = "Scalar";
+            select.appendChild(scalarOption);
+          }
+        }
+        
+        fillDropdown(select1, true);
+        fillDropdown(select2, false);
+        
+        container.appendChild(select1);
+        container.appendChild(select2);
+        
+        // scalar input for first dropdown
+        const scalarInput1 = document.createElement("input");
+        scalarInput1.type = "number";
+        scalarInput1.placeholder = "Scalar 1";
+        scalarInput1.style.display = "none";
+        scalarInput1.style.marginLeft = "10px";
+        
+        // scalar input for second dropdown
+        const scalarInput2 = document.createElement("input");
+        scalarInput2.type = "number";
+        scalarInput2.placeholder = "Scalar 2";
+        scalarInput2.style.display = "none";
+        scalarInput2.style.marginLeft = "10px";
+        
+        container.appendChild(scalarInput1);
+        container.appendChild(scalarInput2);
+        
+        function updateScalarInputs() {
+          scalarInput1.style.display = select1.value === "scalar" ? "inline-block" : "none";
+          scalarInput2.style.display = select2.value === "scalar" ? "inline-block" : "none";
+        }
+        
+        select1.addEventListener("change", updateScalarInputs);
+        select2.addEventListener("change", updateScalarInputs);
+        
+        updateScalarInputs();
+        
+        const calcBtn = document.createElement("button");
+        calcBtn.textContent = "Calculate";
+        calcBtn.style.marginLeft = "10px";
+        container.appendChild(calcBtn);
+        calcBtn.classList.add("primary-btn");
+        
+        
+        calcBtn.addEventListener("click", () => {
+          let item1 = null;
+          let item2 = null;
+          
+          // read first selection
+          if (select1.value.startsWith("matrix_")) {
+            const name = select1.value.replace("matrix_", "");
+            item1 = { type: "matrix", value: savedMatrix[name], name: name };
+          } else if (select1.value.startsWith("vector_")) {
+            const name = select1.value.replace("vector_", "");
+            item1 = { type: "vector", value: savedVector[name], name: name };
+          } else if (select1.value === "scalar") {
+            const scalar = Number(scalarInput1.value);
+            if (isNaN(scalar)) {
+              alert("Digite um escalar válido no primeiro campo");
+              return;
+            }
+            item1 = { type: "scalar", value: scalar };
+          }
+          
+          // read second selection
+          if (select2.value.startsWith("matrix_")) {
+            const name = select2.value.replace("matrix_", "");
+            item2 = { type: "matrix", value: savedMatrix[name], name: name };
+          } else if (select2.value.startsWith("vector_")) {
+            const name = select2.value.replace("vector_", "");
+            item2 = { type: "vector", value: savedVector[name], name: name };
+          } else if (select2.value === "scalar") {
+            const scalar = Number(scalarInput2.value);
+            if (isNaN(scalar)) {
+              alert("Digite um escalar válido no segundo campo");
+              return;
+            }
+            item2 = { type: "scalar", value: scalar };
+          }
+          
+          // clear only result area
+          const oldResult = document.getElementById("timesResult");
+          if (oldResult) oldResult.remove();
+          
+          const resultDiv = document.createElement("div");
+          resultDiv.id = "timesResult";
+          resultDiv.style.marginTop = "10px";
+          container.appendChild(resultDiv);
+          
+          // =========================
+          // VECTOR × VECTOR
+          // =========================
+          if (item1.type === "vector" && item2.type === "vector") {
+            const v1 = item1.value;
+            const v2 = item2.value;
+            
+            if (v1.length !== v2.length) {
+              alert("Vetores devem ter mesmo tamanho");
+              return;
+            }
+            
+            for (let i = 0; i < v1.length; i++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = Number(v1[i]) * Number(v2[i]);
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              resultDiv.appendChild(cell);
+            }
+            return;
+          }
+          
+          // =========================
+          // SCALAR × MATRIX
+          // =========================
+          if (item1.type === "scalar" && item2.type === "matrix") {
+            const scalar = item1.value;
+            const M = item2.value;
+            const result = [];
+            
+            for (let i = 0; i < M.length; i++) {
+              result[i] = [];
+              for (let j = 0; j < M[0].length; j++) {
+                result[i][j] = Number(M[i][j]) * scalar;
+              }
+            }
+            
+            renderMatrix(resultDiv, result);
+            return;
+          }
+          
+          if (item1.type === "matrix" && item2.type === "scalar") {
+            const M = item1.value;
+            const scalar = item2.value;
+            const result = [];
+            
+            for (let i = 0; i < M.length; i++) {
+              result[i] = [];
+              for (let j = 0; j < M[0].length; j++) {
+                result[i][j] = Number(M[i][j]) * scalar;
+              }
+            }
+            
+            renderMatrix(resultDiv, result);
+            return;
+          }
+          
+          // =========================
+          // SCALAR × VECTOR
+          // =========================
+          if (item1.type === "scalar" && item2.type === "vector") {
+            const scalar = item1.value;
+            const v = item2.value;
+            
+            for (let i = 0; i < v.length; i++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = Number(v[i]) * scalar;
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              resultDiv.appendChild(cell);
+            }
+            return;
+          }
+          
+          if (item1.type === "vector" && item2.type === "scalar") {
+            const v = item1.value;
+            const scalar = item2.value;
+            
+            for (let i = 0; i < v.length; i++) {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = Number(v[i]) * scalar;
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              resultDiv.appendChild(cell);
+            }
+            return;
+          }
+          
+          // =========================
+          // VECTOR × MATRIX
+          // =========================
+          if (item1.type === "vector" && item2.type === "matrix") {
+            const v = item1.value;
+            const M = item2.value;
+            
+            if (v.length !== M.length) {
+              alert("Vector size must match matrix rows");
+              return;
+            }
+            
+            const result = [];
+            
+            for (let j = 0; j < M[0].length; j++) {
+              let sum = 0;
+              
+              for (let i = 0; i < v.length; i++) {
+                sum += Number(v[i]) * Number(M[i][j]);
+              }
+              
+              result[j] = sum;
+            }
+            
+            result.forEach(val => {
+              const cell = document.createElement("input");
+              cell.type = "text";
+              cell.value = val;
+              cell.readOnly = true;
+              cell.classList.add("cell");
+              resultDiv.appendChild(cell);
+            });
+            
+            return;
+          }
+          
+          // =========================
+          // MATRIX × MATRIX
+          // =========================
+          if (item1.type === "matrix" && item2.type === "matrix") {
+            dot(item1.name, item2.name, "timesResult");
+            return;
+          }
+          
+          alert("Operação inválida para Times");
+        });
+      });
+
+      const dotBtn = document.createElement("button");
+      dotBtn.textContent = "Dot";
+      dotBtn.addEventListener("click", () => {
+        const DotbuttonA = document.getElementById("DotbuttonAB");
+        const DotbuttonB = document.getElementById("DotbuttonBA");
+        const DotGridA = document.getElementById("DotGridAB");
+        const DotGridB = document.getElementById("DotGridBA");
+        document.getElementById("DotButton").classList.add("algebraActive");
+        
+        DotbuttonA.innerHTML = "";
+        DotbuttonB.innerHTML = "";
+        DotGridA.innerHTML = "";
+        DotGridB.innerHTML = "";
+        const button1 = document.createElement("button");
+        button1.textContent = "A.B";
+        button1.classList.add("primary-btn");
+        const button2 = document.createElement("button");
+        button2.textContent = "B.A";
+        button2.classList.add("primary-btn");
+        DotbuttonA.appendChild(button1);
+        DotbuttonB.appendChild(button2);
+        button1.addEventListener("click", () => {
+          dot("A", "B", "DotGridAB");
+        });
+        
+        button2.addEventListener("click", () => {
+          dot("B", "A", "DotGridBA");
+        });
+      });
+      
+      const gaussBtn = document.createElement("button");
+      gaussBtn.textContent = "Gauss";
+      
+      gaussBtn.addEventListener("click", () => {
+        const gaussArea = document.getElementById("GaussButton");
+        const gaussResult = document.getElementById("GaussResult");
+        document.getElementById("GaussButton").classList.add("algebraActive");
+        
+        gaussArea.innerHTML = "";
+        gaussResult.innerHTML = "";
+        
+        const buttonA = document.createElement("button");
+        buttonA.textContent = "Gauss Matrix A";
+        buttonA.classList.add("primary-btn");
+        
+        const buttonB = document.createElement("button");
+        buttonB.textContent = "Gauss Matrix B";
+        buttonB.classList.add("primary-btn");
+        
+        gaussArea.append(buttonA, buttonB);
+        
+        // =========================
+        // CREATE 2 COLUMNS
+        // =========================
+        const btnWrapper = document.createElement("div");
+        btnWrapper.style.display = "flex";
+        btnWrapper.style.gap = "240px";
+        
+        btnWrapper.append(buttonA, buttonB);
+        gaussArea.appendChild(btnWrapper);
+        
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.gap = "240px";
+        
+        const colA = document.createElement("div");
+
+        colA.id = "GaussResultA";
+        
+        const colB = document.createElement("div");
+        colB.id = "GaussResultB";
+        
+        const titleA = document.createElement("h3");
+        titleA.textContent = "Matrix A Result";
+        
+        const titleB = document.createElement("h3");
+        titleB.textContent = "Matrix B Result";
+        
+        colA.appendChild(titleA);
+        colB.appendChild(titleB);
+        
+        wrapper.appendChild(colA);
+        wrapper.appendChild(colB);
+        gaussResult.appendChild(wrapper);
+        
+        buttonA.addEventListener("click", () => {
+          const A = savedMatrix.A;
+          
+          if (!Array.isArray(A) || A.length === 0 || !Array.isArray(A[0])) {
+            alert("Salve a Matriz A primeiro!");
+            return;
+          }
+          
+          const resultA = gauss("A");
+          
+          colA.innerHTML = "";
+          const titleA = document.createElement("h3");
+          titleA.textContent = "Matrix A Result";
+          colA.appendChild(titleA);
+          
+          renderGaussMatrix(resultA, "GaussResultA");
+        });
+        
+        buttonB.addEventListener("click", () => {
+          const B = savedMatrix.B;
+          
+          if (!Array.isArray(B) || B.length === 0 || !Array.isArray(B[0])) {
+            alert("Salve a Matriz B primeiro!");
+            return;
+          }
+          
+          const resultB = gauss("B");
+          
+          colB.innerHTML = "";
+          const titleB = document.createElement("h3");
+          titleB.textContent = "Matrix B Result";
+          colB.appendChild(titleB);
+          
+          renderGaussMatrix(resultB, "GaussResultB");
+        });
+      });
+
+      const solveBtn = document.createElement("button");
+      solveBtn.textContent = "Solve";
+      
+      solveBtn.addEventListener("click", () => {
+        const solveArea = document.getElementById("SolveButton");
+        document.getElementById("SolveButton").classList.add("algebraActive");
+        solveArea.innerHTML = "";
+  
+        const btnA = document.createElement("button");
+        btnA.textContent = "Solve Matrix A";
+        btnA.classList.add("primary-btn");
+        
+        const btnB = document.createElement("button");
+        btnB.textContent = "Solve Matrix B";
+        btnB.classList.add("primary-btn");
+        
+        solveArea.append(btnA, btnB);
+        
+        btnA.addEventListener("click", () => {
+          if (!savedMatrix.A.length) {
+            alert("Salve a matriz A primeiro!");
+            return;
+          }
+          
+          solve("A");
+        });
+        
+        btnB.addEventListener("click", () => {
+          if (!savedMatrix.B.length) {
+            alert("Salve a matriz B primeiro!");
+            return;
+          }
+          
+          solve("B");
+        });
+      });
+      
+      algebraButtons.append(transposeBtn, sumBtn, timesBtn, dotBtn, gaussBtn, solveBtn);
+    }
+    //Dot functions
+    function dot(prefix1, prefix2, containerId) {
+      const rawMatrix1 = savedMatrix[prefix1];
+      const rawMatrix2 = savedMatrix[prefix2];
+      
+      if (!Array.isArray(rawMatrix1) || !Array.isArray(rawMatrix2) || rawMatrix1.length === 0 || rawMatrix2.length === 0) {
+        alert("salve as matrizes primeiro!");
+        return;
+      }
+      
+      const matrix1 = rawMatrix1.map(row =>
+        row.map(value => {
+          const n = parseFloat(String(value).replace(",", ".").trim());
+          return isNaN(n) ? 0 : n;
+        })
+      );
+      
+      const matrix2 = rawMatrix2.map(row =>
+        row.map(value => {
+          const n = parseFloat(String(value).replace(",", ".").trim());
+          return isNaN(n) ? 0 : n;
+        })
+      );
+      
+      console.log("rawMatrix1:", rawMatrix1);
+      console.log("rawMatrix2:", rawMatrix2);
+      console.log("matrix1:", matrix1);
+      console.log("matrix2:", matrix2);
+      
+      if (matrix1[0].length !== matrix2.length) {
+        alert(`Dimensões inválidas: colunas de ${prefix1} devem ser iguais às linhas de ${prefix2}.`);
+        return;
+      }
+      
+      const rows = matrix1.length;
+      const cols = matrix2[0].length;
+      const common = matrix1[0].length;
+      
+      const result = [];
+      
+      for (let i = 0; i < rows; i++) {
+        result[i] = [];
+        for (let j = 0; j < cols; j++) {
+          let sum = 0;
+          for (let k = 0; k < common; k++) {
+            sum += matrix1[i][k] * matrix2[k][j];
+          }
+          result[i][j] = sum;
+        }
+      }
+      
+      const gridEl = document.getElementById(containerId);
+      if (!gridEl) {
+        alert("container não encontrado!");
+        return;
+      }
+      
+      gridEl.innerHTML = "";
+      renderMatrix(gridEl, result);
+    }
+    
+    function renderMatrix(gridEl, M){
+      gridEl.innerHTML = "";
+      if (!Array.isArray(M) || M.length === 0) return;
+      for (let i = 0; i < M.length; i++){
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("row");
+        for (let j = 0; j < M[i].length; j++){  // use M[i].length (safer)
+          const cell = document.createElement("input");
+          cell.type = "text";
+          cell.value = M[i][j];
+          cell.readOnly = true;
+          cell.classList.add("cell");
+          rowDiv.appendChild(cell);
+        }
+        gridEl.appendChild(rowDiv);
+      }
+    }
+    
+    // Gauss functions
+    function gauss(prefix) {
+      let matrix = savedMatrix[prefix].map(row => row.map(Number));
+      
+      const rows = matrix.length;
+      const cols = matrix[0].length;
+      
+      for (let j = 0; j < Math.min(rows, cols); j++) {
+        
+        if (matrix[j][j] === 0) {
+          for (let i = j + 1; i < rows; i++) {
+            if (matrix[i][j] !== 0) {
+              [matrix[j], matrix[i]] = [matrix[i], matrix[j]];
+              break;
+            }
+          }
+        }
+        
+        if (matrix[j][j] === 0) {
+          continue;
+        }
+        
+        if (matrix[j][j] !== 1) {
+          let pivot = matrix[j][j];
+          for (let k = j; k < cols; k++) {
+            matrix[j][k] /= pivot;
+          }
+        }
+        
+        for (let i = j + 1; i < rows; i++) {
+          let factor = matrix[i][j];
+          
+          for (let k = j; k < cols; k++) {
+            matrix[i][k] = matrix[i][k] - factor * matrix[j][k];
+            
+            if (Math.abs(matrix[i][k]) < 1e-10) {
+              matrix[i][k] = 0;
+            }
+          }
+        }
+      }
+      
+      return matrix;
+    }
+    
+    function renderGaussMatrix(matrix, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      
+      for (let i = 0; i < matrix.length; i++) {
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("row");
+        
+        for (let j = 0; j < matrix[i].length; j++) {
+          const cell = document.createElement("input");
+          cell.type = "text";
+          cell.value = Number(matrix[i][j].toFixed(2));
+          cell.readOnly = true;
+          cell.classList.add("cell");
+          rowDiv.appendChild(cell);
+        }
+        
+        container.appendChild(rowDiv);
+      }
+    }
+    
+    // Solve function
+    function solve(prefix) {
+      let escalonada = gauss(prefix);
+      
+      const rows = escalonada.length;
+      const cols = escalonada[0].length;
+      
+      const solveArea = document.getElementById("SolveButton");
+      if (!solveArea) {
+        console.error('Elemento com id "SolveButton" não foi encontrado.');
+        return;
+      }
+      
+      let resultDiv = document.getElementById(`solveResult${prefix}`);
+      
+      if (!resultDiv) {
+        resultDiv = document.createElement("div");
+        resultDiv.id = `solveResult${prefix}`;
+        solveArea.appendChild(resultDiv);
+      }
+      
+      resultDiv.innerHTML = `<h3>Resultado da matriz ${prefix}</h3>`;
+      
+      if (cols !== rows + 1) {
+        const label = document.createElement("label");
+        label.textContent = "Matriz aumentada inválida para solve";
+        label.style.display = "block";
+        resultDiv.appendChild(label);
+        return;
+      }
+      
+      let tipo = "SPD";
+      
+      for (let i = 0; i < rows; i++) {
+        let todosZero = true;
+        
+        for (let j = 0; j < cols - 1; j++) {
+          if (Math.abs(escalonada[i][j]) > 1e-10) {
+            todosZero = false;
+            break;
+          }
+        }
+        
+        if (todosZero) {
+          if (Math.abs(escalonada[i][cols - 1]) > 1e-10) {
+            tipo = "SI";
+            break;
+          } else {
+            tipo = "SPI";
+          }
+        }
+      }
+      
+      if (tipo === "SI") {
+        const label = document.createElement("label");
+        label.textContent = "Sistema Impossível (SI)";
+        label.style.display = "block";
+        resultDiv.appendChild(label);
+        return;
+      }
+      
+      if (tipo === "SPI") {
+        const label = document.createElement("label");
+        label.textContent = "Sistema Possível e Indeterminado (SPI)";
+        label.style.display = "block";
+        resultDiv.appendChild(label);
+        return;
+      }
+      
+      const tipoLabel = document.createElement("label");
+      tipoLabel.textContent = "Sistema Possível e Determinado (SPD)";
+      tipoLabel.style.display = "block";
+      resultDiv.appendChild(tipoLabel);
+      
+      let sol = new Array(rows).fill(0);
+      
+      for (let i = rows - 1; i >= 0; i--) {
+        let valor = escalonada[i][cols - 1];
+        
+        for (let j = i + 1; j < rows; j++) {
+          valor -= escalonada[i][j] * sol[j];
+        }
+        
+        if (Math.abs(escalonada[i][i]) < 1e-10) {
+          const label = document.createElement("label");
+          label.textContent = "Erro ao calcular solução.";
+          label.style.display = "block";
+          resultDiv.appendChild(label);
+          return;
+        }
+        
+        sol[i] = valor / escalonada[i][i];
+      }
+      
+      for (let i = 0; i < rows; i++) {
+        const label = document.createElement("label");
+        label.textContent = `var[${i + 1}] = ${sol[i]}`;
+        label.style.display = "block";
+        resultDiv.appendChild(label);
+      }
+    }
+    //TIMES functions
+    function updateMatrixDropdown() {
+      // create container if it doesn't exist
+      let container = document.getElementById("dropdownContainer");
+      
+      if (!container) {
+        container = document.createElement("div");
+        container.id = "dropdownContainer";
+        document.body.appendChild(container); // you can change where it goes later
+      }
+      
+      // clear previous content
+      container.innerHTML = "";
+      
+      // create dropdown
+      const select = document.createElement("select");
+      select.id = "matrixDropdown";
+      
+      // default option
+      const first = document.createElement("option");
+      first.value = "";
+      first.textContent = "Choose a matrix";
+      select.appendChild(first);
+      
+      // fill with existing matrices
+      Object.keys(savedMatrix).forEach(prefix => {
+        const option = document.createElement("option");
+        option.value = prefix;
+        option.textContent = `Matrix ${prefix}`;
+        select.appendChild(option);
+      });
+      
+      container.appendChild(select);
+    }
+    
+    
+    // ====================== VECTOR ======================
+    function setupVector(prefix) {
+      const I = document.getElementById(`myInputI${prefix}`);
+      const V = document.getElementById(`myInputV${prefix}`);
+      const SaveBtn = document.getElementById(`BV${prefix}`);
+      const vectorButtons = document.getElementById(`vectorButtons${prefix}`);
+
+      SaveBtn.addEventListener("click", () => {
+        vectorButtons.innerHTML = "";
+        vectorButtons.append(GetVectorValue(prefix), SetVectorValue(prefix));
+
+        const text = V.value.trim();
+        if (!text) return;
+
+        const numbers = text.split(",")
+          .map(x => Number(x.trim()))
+          .filter(x => !Number.isNaN(x));
+
+        if (numbers.length === 0) return;
+
+        savedVector[prefix] = (numbers);
+
+        updateAlgebraButtons();
+      });
+    }
+    
+    function GetVectorValue(prefix) {
+      const gets = document.getElementById(`vectorGetRow${prefix}`);
+      const getresult = document.getElementById(`vectorGetResult${prefix}`);
+      const getBtn = document.createElement("button");
+      const getBlock = document.getElementById(`vectorGetBlock${prefix}`);
+      getBtn.textContent = `Get Vector ${prefix}`;
+      getBtn.addEventListener("click", () => {
+        gets.innerHTML = "";
+        const input = document.createElement("input");
+        input.type = "number";
+        input.placeholder = "i";
+        const sendbtn = document.createElement("button");
+        sendbtn.textContent = `Send Get ${prefix}`;
+        gets.append(input, sendbtn);
+        getBlock.classList.add("hasBorder");
+        sendbtn.addEventListener("click", () => {
+          const Vector = savedVector[prefix];
+          const i = parseInt(input.value, 10) - 1;
+          getresult.innerHTML = "";
+          if (!Array.isArray(Vector) || Vector.length === 0) {
+            alert(`Vetor ${prefix} não foi salvo ainda.`);
+            return;
+          }
+          
+          if (Number.isNaN(i)) {
+            alert(`i inválido para o Vetor ${prefix}`);
+            return;
+          }
+          if (i < 0 || i >= Vector.length) {
+            alert(`Tamanho i inválido para o Vetor ${prefix}`);
+            return;
+          }
+          const label = document.createElement("label");
+          label.textContent = Vector[i];
+          getresult.append(label);
+        });
+      });
+      
+      return getBtn;
+    }
+    
+    function SetVectorValue(prefix) {
+      const setBtn = document.createElement("button");
+      const sets = document.getElementById(`vectorSetRow${prefix}`);
+      const V = document.getElementById(`myInputV${prefix}`);
+      setBtn.textContent = `Set Vector${prefix}`;
+      setBtn.addEventListener("click", () => {
+        sets.innerHTML = ""; // clear old UI
+        const input1 = document.createElement("input");
+        input1.type = "number";
+        input1.placeholder = "i";
+        const input2 = document.createElement("input");
+        input2.type = "number";
+        input2.placeholder = "value";
+        const sendbtn = document.createElement("button");
+        sendbtn.textContent = `Send Set${prefix}`;
+        input2.classList.add("bigInputV");
+        sets.append(input1, input2, sendbtn);
+        sendbtn.addEventListener("click", () => {
+          const Vector = savedVector[prefix];
+          
+          if (!Array.isArray(Vector) || Vector.length === 0) {
+            alert(`Vetor ${prefix} não foi salvo ainda.`);
+            return;
+          }
+          const i = parseInt(input1.value, 10) - 1;
+          const number = Number(input2.value);
+          
+          if (Number.isNaN(i) || Number.isNaN(number)) {
+            alert(`Valores inválidos para o Vetor${prefix}`);
+            return;
+          }
+          
+          if (i < 0 || i >= Vector.length) {
+            alert(`Tamanho i inválido para o Vetor${prefix}`);
+            return;
+          }
+          
+          Vector[i] = number;
+          V.value = Vector.join(",");
+        });
+      });
+      return setBtn;
+    }
+    
+    setupVector("A")
+    setupVector("B")
+
+    //MATRIX FUNCTION ==================================================================================
+
+    function setupMatrix(prefix) {
+      const L = document.getElementById(`myInputL${prefix}`);
+      const C = document.getElementById(`myInputC${prefix}`);
+      const createBtn = document.getElementById(`BM${prefix}`);
+      const grid = document.getElementById(`matrixGrid${prefix}`);
+      const buttons = document.getElementById(`matrixButtons${prefix}`);
+      const gets = document.getElementById(`matrixGet${prefix}`);
+      const sets = document.getElementById(`matrixSet${prefix}`);
+      const getresult = document.getElementById(`matrixGetResult${prefix}`);
+      const matrixArea = document.getElementById("matrixAreaA");
+      const matrixtop = matrixArea.querySelector(".matrixTop");
+
+      createBtn.addEventListener("click", () => {
+        grid.innerHTML = "";
+        buttons.innerHTML = "";
+        console.log(matrixtop);
+
+        const linhas = Number(L.value);
+        const colunas = Number(C.value);
+
+        if (!Number.isInteger(linhas) || !Number.isInteger(colunas) || linhas <= 0 || colunas <= 0) {
+          alert(`Type valid numbers for L${prefix} and C${prefix}.`);
+          return;
+        }
+
+        for (let i = 0; i < linhas; i++) {
+          const row = document.createElement("div");
+          row.classList.add("row");
+
+          for (let j = 0; j < colunas; j++) {
+            const input = document.createElement("input");
+            input.type = "number";
+            input.classList.add("cell");
+            input.dataset.row = i;
+            input.dataset.col = j;
+            input.value = 0; // default value
+            row.appendChild(input);
+          }
+
+          if (i === linhas - 1) {
+            const sendBtn = document.createElement("button");
+            sendBtn.textContent = "Send";
+            sendBtn.classList.add("send-btn");
+            sendBtn.addEventListener("click", () => {
+              matrixtop.querySelector(".reset-btn")?.remove();
+              buttons.append(GetMatrixValue(prefix), SetMatrixValue(prefix));
+              const values = [];
+              for (let r = 0; r < linhas; r++) {
+                values[r] = [];
+                for (let c = 0; c < colunas; c++) {
+                  const cell = grid.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+                  values[r][c] = cell && cell.value.trim() !== ""
+                  ? parseFloat(cell.value.replace(",", "."))
+                  : 0;
+                }
+              }
+              
+              // save it globally
+              savedMatrix[prefix] = values;
+              console.log(`Matrix ${prefix}:`, savedMatrix[prefix]);
+              
+              // create/refresh buttons
+              buttons.innerHTML = "";
+              buttons.append(GetMatrixValue(prefix), SetMatrixValue(prefix));
+              
+              updateAlgebraButtons();
+            });
+            
+            row.appendChild(sendBtn);
+          }
+          
+          grid.appendChild(row);
+        }
+      });
+    }
+
+    function ResetMatrix (prefix, l, c){
+      
+    }
+    
+    // GET MATRIX FUNCTION ==================================================================================
+    
+    function GetMatrixValue (prefix, l ,c) {
+      const gets = document.getElementById(`matrixGet${prefix}`);
+      const getresult = document.getElementById(`matrixGetResult${prefix}`);
+      let Matrix = savedMatrix[prefix]
+      const getBtn = document.createElement("button");
+      getBtn.textContent = `Get${prefix}`;
+      getBtn.addEventListener("click", () => {
+        gets.innerHTML = "";
+        const input1 = document.createElement("input")
+        input1.type = "number"
+        input1.placeholder = "l"
+        const input2 = document.createElement("input")
+        input2.type = "number"
+        input2.placeholder = "c"
+        const sendgetbutton = document.createElement("button")
+        sendgetbutton.textContent = `Send Get${prefix}`
+        gets.append(input1, input2, sendgetbutton);
+        input1.classList.add("smallInput");
+        input2.classList.add("smallInput");
+        sendgetbutton.classList.add("sendgetbutton");
+        sendgetbutton.addEventListener("click", () => {
+          const l = parseInt(input1.value, 10)-1;
+          const c = parseInt(input2.value, 10)-1;
+          const label = document.createElement("label")
+          getresult.innerHTML = "";
+          if (Number.isNaN(l) || Number.isNaN(c)) {
+            alert(`Dimensões inválidas para ${prefix}.`);
+            return;
+          }
+          if (!Array.isArray(matrix) || matrix.length === 0 || !Array.isArray(matrix[0])) {
+            alert(`Matrix ${prefix} not saved yet. Click Send on Matrix ${prefix} first.`);
+            return;
+          }
+          if (l < 0 || c < 0 || l >= Matrix.length || c >= Matrix[0].length) {
+            alert("Dimensões nulas são inválidas")
+            return
+          }
+          const number = Matrix[l][c]
+          label.textContent = number;
+          getresult.append(label)
+        });
+      });
+      return getBtn;
+    }
+    
+    // ====================== MATRIX BUILDER (REUSE FOR A AND B) ======================
+    
+    function SetMatrixValue (prefix, l ,c) {
+      const sets = document.getElementById(`matrixSet${prefix}`);
+      const grid = document.getElementById(`matrixGrid${prefix}`);
+      let Matrix = savedMatrix[prefix]
+      const setBtn = document.createElement("button");
+      setBtn.textContent = `Set${prefix}`;
+      setBtn.addEventListener("click", () => {
+        sets.innerHTML = "";
+        const input1 = document.createElement("input")
+        input1.type = "number"
+        input1.placeholder = "l"
+        const input2 = document.createElement("input")
+        input2.type = "number"
+        input2.placeholder = "c"
+        const input3 = document.createElement("input")
+        input3.type = "number"
+        input3.value = 0
+        input3.placeholder = "value"
+        const sendsetbutton = document.createElement("button")
+        sendsetbutton.textContent = `Send Set${prefix}`
+        input1.classList.add("smallInput");
+        input2.classList.add("smallInput");
+        input3.classList.add("bigInput");
+        sendsetbutton.classList.add("sendgetbutton");
+        sets.append(input1, input2, input3, sendsetbutton);
+        sendsetbutton.addEventListener("click", () => {
+          const l = parseInt(input1.value, 10)-1;
+          const c = parseInt(input2.value, 10)-1;
+          const value = parseInt(input3.value, 10);
+          if (l >= Matrix.length || l <= -1 || c > Matrix[0].length-1 || c <= -1){
+            alert(`Dimensões inválidas para ${prefix}.`);
+            return
+          }else if (Number.isNaN(l) || Number.isNaN(c)){
+            alert("Dimensões nulas são inválidas")
+            return
+          }else if (Number.isNaN(value)){
+            alert("Valores nulos são inválidos")
+            return
+          }else{
+            Matrix[l][c] = value
+            const cell = grid.querySelector(
+              `.cell[data-row="${l}"][data-col="${c}"]`
+            );
+            cell.value = value
+          }
+        });
+      });
+      return setBtn;
+    }
+    
+        setupMatrix("A");
+        setupMatrix("B");
+  </script>
+</body>
+</html>
